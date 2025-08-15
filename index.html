@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OHZ - Internet con Uptime Negativo™</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #ffcccc 0%, #ccccff 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="60" font-family="Arial" font-size="14" fill="rgba(255,0,0,0.1)">SIN CONEXIÓN</text></svg>'),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><text x="10" y="60" font-family="Arial" font-size="14" fill="rgba(0,0,255,0.1)">ERROR 404</text></svg>');
+            background-repeat: repeat;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+            animation: glitch 2s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 5px dashed #ff0000;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo {
+            font-family: 'Comic Neue', cursive;
+            font-size: 5rem;
+            color: #ff0000;
+            text-shadow: 3px 3px 0 #000, 6px 6px 0 rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            animation: flicker 3s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                opacity: 0.2;
+            }
+        }
+        
+        .slogan {
+            font-size: 1.8rem;
+            color: #0000ff;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .uptime-counter {
+            background: #000;
+            color: #ff0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            font-family: monospace;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "🚫";
+            position: absolute;
+            font-size: 10rem;
+            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ff0000;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px) rotate(2deg);
+        }
+        
+        .feature-card::after {
+            content: "⚠️";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.8rem;
+            color: #ff0000;
+            margin-bottom: 15px;
+        }
+        
+        .team-section {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .team-section h2 {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            margin-bottom: 30px;
+        }
+        
+        .engineer {
+            display: inline-block;
+            margin: 0 20px;
+            text-align: center;
+        }
+        
+        .engineer-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff0000, #0000ff);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+            border: 5px solid #ffcc00;
+        }
+        
+        .testimonials {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .testimonial {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            width: 300px;
+            position: relative;
+            border: 2px dashed #ff0000;
+        }
+        
+        .testimonial::before {
+            content: """;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 5rem;
+            color: rgba(255,0,0,0.2);
+            font-family: serif;
+        }
+        
+        .stats {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-item {
+            display: inline-block;
+            margin: 0 30px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+        
+        .badge {
+            background: #ff0000;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 5px dashed #0000ff;
+            margin-top: 40px;
+            color: #666;
+        }
+        
+        .disclaimer {
+            background: #ff0000;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 800px;
+            font-size: 0.9rem;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 2rem;
+            z-index: 1000;
+            transition: opacity 1s;
+        }
+        
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .progress-bar {
+            width: 300px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: #ff0000;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .connection-error {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff0000;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .xdp-badge {
+            background: #0000ff;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 3rem;
+            }
+            
+            .slogan {
+                font-size: 1.2rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .feature-card, .testimonial {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div>Conectando a los servidores de OHZ...</div>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div style="margin-top: 20px; font-size: 1rem;">(Esto puede tardar varios días)</div>
+    </div>
+    
+    <div class="connection-error" id="connectionError">
+        ⚠️ Error de conexión: No se pudo cargar la página. Intente nuevamente más tarde.
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">OHZ</div>
+            <div class="slogan">Internet con Uptime Negativo™ - Innovando en fallos desde 2023</div>
+            <div class="uptime-counter" id="uptimeCounter">
+                UPTIME ACTUAL: <span class="glitch-text">-12.7%</span>
+            </div>
+        </header>
+        
+        <section class="hero">
+            <h1>¿Cansado de tener Internet funcional?<br>¡Nosotros tenemos la solución!</h1>
+            <p>En OHZ hemos revolucionado la industria con nuestro exclusivo servicio de Internet que garantiza una experiencia <span class="glitch-text">desconectada</span> como ninguna otra.</p>
+            <div class="xdp-badge">Protegido por XDP™ (eXtra Disastrous Protection)</div>
+        </section>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h3>Uptime Negativo</h3>
+                <p>Nuestros servidores están tan desconectados que literalmente viajan en el tiempo para fallar antes de que los uses. ¡Garantizado!</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>VPS Fantasma</h3>
+                <p>Servidores virtuales tan inexistentes que incluso nuestros técnicos dudan de su ubicación. ¡Paga por algo que nunca verás!</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>Soporte Inexistente</h3>
+                <p>Nuestro equipo de soporte es tan eficiente que resolverá tu problema antes de que ocurra... o quizás nunca. ¡Sorpresa!</p>
+            </div>
+        </div>
+        
+        <section class="team-section">
+            <h2>Nuestro Equipo de "Expertos"</h2>
+            <div class="engineer">
+                <div class="engineer-img">🤷‍♂️</div>
+                <h3>Mody</h3>
+                <p>Ingeniero Certificado en Desconexiones</p>
+                <p>"Si funciona, no es OHZ"</p>
+            </div>
+        </section>
+        
+        <section class="stats">
+            <h2>Nuestros Logros</h2>
+            <div class="stat-item">
+                <div class="stat-number">-12.7%</div>
+                <div>Uptime Promedio</div>
+                <div class="badge">RÉCORD MUNDIAL</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-number">99.99%</div>
+                <div>Tasa de Fallos</div>
+                <div class="badge">GARANTIZADO</div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-number">3,762</div>
+                <div>Clientes Desconectados</div>
+                <div class="badge">Y CONTANDO</div>
+            </div>
+        </section>
+        
+        <div class="testimonials">
+            <div class="testimonial">
+                <p>"Contraté OHZ hace 6 meses. Desde entonces, he recuperado mi vida social, leído 15 libros y aprendido a tejer. ¡Gracias OHZ por desconectarme de Internet!"</p>
+                <p><strong>- Juan P., cliente desde 2023</strong></p>
+            </div>
+            
+            <div class="testimonial">
+                <p>"Mi VPS de OHZ es tan seguro que ni siquiera yo puedo acceder a él. ¡Nunca me había sentido tan protegido contra ciberataques!"</p>
+                <p><strong>- María G., CEO de Startup Fallida</strong></p>
+            </div>
+            
+            <div class="testimonial">
+                <p>"El soporte de OHZ es increíble. Abrí un ticket hace 3 meses y aún no me han respondido. ¡Eso es consistencia!"</p>
+                <p><strong>- Roberto T., cliente satisfecho</strong></p>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            <strong>ADVERTENCIA:</strong> OHZ no garantiza ningún tipo de servicio, conexión o existencia real de sus servidores. Al contratar nuestros servicios, aceptas que nunca tendrás Internet funcional y que probablemente te arrepentirás. Nuestro "99.99% de uptime" es puramente satírico y no refleja la realidad (que es mucho peor). La protección XDP™ es tan efectiva que incluso protege contra intentos de conexión exitosos. El ingeniero Mody existe (o eso creemos).
+        </div>
+        
+        <footer>
+            <p>© 2023 OHZ - Internet con Uptime Negativo™</p>
+            <p>Servicio no disponible en todo el mundo (ni siquiera aquí)</p>
+            <p><small>Esta página es una sátira y no representa una empresa real. Cualquier parecido con servicios de Internet deficientes es pura coincidencia... o no.</small></p>
+        </footer>
+    </div>
+    
+    <script>
+        // Simular problemas de conexión
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simular carga eterna
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 5;
+                document.getElementById('progress').style.width = Math.min(progress, 100) + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    // Nunca termina de cargar realmente
+                }
+            }, 300);
+            
+            // Ocultar "carga" después de un tiempo (pero mostrar errores)
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                
+                // Mostrar errores aleatorios
+                setInterval(() => {
+                    if (Math.random() > 0.3) {
+                        const error = document.getElementById('connectionError');
+                        error.style.display = 'block';
+                        setTimeout(() => {
+                            error.style.display = 'none';
+                        }, 3000);
+                    }
+                }, 5000);
+            }, 5000);
+            
+            // Cambiar el uptime aleatoriamente
+            setInterval(() => {
+                const uptimeElement = document.querySelector('#uptimeCounter .glitch-text');
+                const currentUptime = parseFloat(uptimeElement.textContent);
+                const newUptime = currentUptime - (Math.random() * 5);
+                uptimeElement.textContent = newUptime.toFixed(1) + '%';
+            }, 2000);
+            
+            // Efecto de glitch aleatorio
+            setInterval(() => {
+                const glitchElements = document.querySelectorAll('.glitch-text');
+                glitchElements.forEach(el => {
+                    el.classList.remove('glitch-text');
+                    void el.offsetWidth; // Trigger reflow
+                    el.classList.add('glitch-text');
+                });
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
